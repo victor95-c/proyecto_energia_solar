@@ -2,7 +2,7 @@ from API.solar_api import SolarAPIService
 from Patrones.bridge import (
     MonitorConsola,
     MonitorWeb,
-    SistemaMonitoreado
+    SistemaResidencial
 )
 from Patrones.composite import (
     PanelSolar,
@@ -82,7 +82,7 @@ def ejecutar_decorator(potencia):
 def ejecutar_bridge():
     print("\n--- 5. BRIDGE ---")
 
-    sistema_monitoreado = SistemaMonitoreado(MonitorConsola())
+    sistema_monitoreado = SistemaResidencial(MonitorConsola())
     sistema_monitoreado.mostrar_estado(
         "Sistema funcionando correctamente"
     )
