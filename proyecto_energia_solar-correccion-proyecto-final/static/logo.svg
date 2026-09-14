@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="SolarPro">
+  <defs>
+    <linearGradient id="sun" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffd12e"/><stop offset="1" stop-color="#f26b12"/></linearGradient>
+    <linearGradient id="panel" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#1598d0"/><stop offset="1" stop-color="#071c35"/></linearGradient>
+  </defs>
+  <g fill="#ff9d13">
+    <path d="M49 2l4 17-8 0z"/><path d="M17 18l15 10-6 6z"/><path d="M2 52l18-4v8z"/><path d="M18 85l14-13 5 7z"/><path d="M83 18L70 31l-6-7z"/>
+  </g>
+  <circle cx="45" cy="43" r="25" fill="url(#sun)"/>
+  <path d="M77 29c8 9 10 22 7 33" fill="none" stroke="#3d9a3e" stroke-width="5"/>
+  <path d="M73 31c7 7 10 17 9 25" fill="none" stroke="#0b6eb4" stroke-width="3"/>
+  <g fill="url(#panel)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M30 43l32-2-8 25-34-3z"/>
+    <path d="M38 68l-1 14h18l1-15"/>
+    <path d="M42 82h10" fill="none"/>
+  </g>
+  <path d="M86 47l-13 17h9L66 92l24-29h-9z" fill="#f47b0b"/>
+</svg>

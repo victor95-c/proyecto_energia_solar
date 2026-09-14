@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071c35">
+  <title>SolarPro | Gestión inteligente de energía solar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #071c35;
+      --ink-soft: #34506d;
+      --blue: #0b6eb4;
+      --blue-light: #dff2ff;
+      --orange: #ff9d13;
+      --orange-deep: #ef6810;
+      --green: #3d9a3e;
+      --green-light: #e5f5df;
+      --surface: #ffffff;
+      --canvas: #f4f8fb;
+      --line: #dce7ef;
+      --shadow: 0 20px 48px rgba(7, 28, 53, .09);
+      font-family: "DM Sans", sans-serif;
+      color: var(--ink);
+      background: var(--canvas);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; background: var(--canvas); }
+    button, input { font: inherit; }
+    .shell { display: grid; grid-template-columns: 246px 1fr; min-height: 100vh; }
+    .sidebar { position: relative; overflow: hidden; padding: 28px 18px; color: white; background: var(--ink); }
+    .sidebar::after { content: ""; position: absolute; width: 210px; height: 210px; right: -120px; bottom: -70px; border: 36px solid rgba(255, 157, 19, .22); border-radius: 50%; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 10px 35px; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; padding: 4px; border-radius: 12px; background: white; box-shadow: 0 0 0 5px rgba(255, 157, 19, .13); }
+    .brand-mark img { width: 100%; height: 100%; }
+    .brand strong { display: block; font: 700 21px "Space Grotesk", sans-serif; letter-spacing: .06em; }
+    .brand span { display: block; margin-top: 2px; color: #9eb4c9; font-size: 9px; letter-spacing: .15em; }
+    .nav-label { padding: 0 12px 10px; color: #66819b; font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .nav { display: grid; gap: 7px; }
+    .nav button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px; border: 0; border-radius: 10px; color: #aec3d5; background: transparent; cursor: pointer; text-align: left; transition: .2s ease; }
+    .nav button:hover, .nav button.active { color: white; background: rgba(255,255,255,.1); }
+    .nav button.active { box-shadow: inset 3px 0 var(--orange); }
+    .nav-icon { width: 22px; text-align: center; font-size: 18px; }
+    .side-status { position: absolute; right: 18px; bottom: 25px; left: 18px; z-index: 1; padding: 14px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.05); }
+    .side-status small { color: #91a9be; font-size: 11px; }
+    .status-line { display: flex; align-items: center; gap: 7px; margin-top: 7px; font-size: 12px; font-weight: 700; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #61c454; box-shadow: 0 0 0 4px rgba(97,196,84,.14); }
+    main { min-width: 0; padding: 26px clamp(20px, 4vw, 58px) 38px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 38px; }
+    .eyebrow { color: var(--orange-deep); font-size: 11px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+    h1, h2, p { margin: 0; }
+    h1 { margin-top: 7px; font: 700 clamp(25px, 3vw, 35px) "Space Grotesk", sans-serif; letter-spacing: -.04em; }
+    .subtitle { margin-top: 8px; color: var(--ink-soft); font-size: 14px; }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .location { display: flex; align-items: center; gap: 8px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink-soft); background: white; font-size: 12px; font-weight: 600; }
+    .refresh { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 10px; color: white; background: var(--blue); cursor: pointer; font-size: 18px; transition: .2s; }
+    .refresh:hover { transform: rotate(30deg); background: var(--ink); }
+    .hero { position: relative; display: grid; grid-template-columns: 1fr 280px; gap: 26px; overflow: hidden; min-height: 190px; padding: 28px 32px; border-radius: 16px; color: white; background: linear-gradient(118deg, #09233d 0%, #0b426a 62%, #0d7199 100%); box-shadow: var(--shadow); }
+    .hero::after { content: ""; position: absolute; right: -50px; bottom: -110px; width: 310px; height: 310px; border: 54px solid rgba(255, 157, 19, .88); border-radius: 50%; }
+    .hero-content { position: relative; z-index: 1; }
+    .hero h2 { max-width: 490px; font: 600 clamp(22px, 3vw, 31px) "Space Grotesk", sans-serif; letter-spacing: -.04em; }
+    .hero p { max-width: 470px; margin-top: 12px; color: #bfd6e7; font-size: 14px; line-height: 1.6; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 7px; margin-top: 20px; padding: 7px 10px; border-radius: 20px; color: #d8f4cf; background: rgba(80, 170, 71, .2); font-size: 11px; font-weight: 700; }
+    .sun-data { position: relative; z-index: 1; align-self: center; padding: 18px; border-left: 1px solid rgba(255,255,255,.22); }
+    .sun-data small { color: #b4d1e2; font-size: 11px; }
+    .sun-data strong { display: block; margin-top: 7px; font: 700 34px "Space Grotesk", sans-serif; }
+    .sun-data span { color: #f9c276; font-size: 12px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin: 31px 0 14px; }
+    .section-head h2 { font: 700 16px "Space Grotesk", sans-serif; }
+    .section-head span { color: var(--ink-soft); font-size: 12px; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .metric { padding: 20px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); box-shadow: 0 6px 20px rgba(7,28,53,.035); }
+    .metric-top { display: flex; align-items: center; justify-content: space-between; color: var(--ink-soft); font-size: 12px; font-weight: 600; }
+    .metric-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; font-size: 18px; }
+    .metric.orange .metric-icon { color: var(--orange-deep); background: #fff0d7; }
+    .metric.blue .metric-icon { color: var(--blue); background: var(--blue-light); }
+    .metric.green .metric-icon { color: var(--green); background: var(--green-light); }
+    .metric strong { display: block; margin-top: 18px; font: 700 27px "Space Grotesk", sans-serif; }
+    .metric small { display: block; margin-top: 4px; color: #7790a4; font-size: 11px; }
+    .lower { display: grid; grid-template-columns: 1.4fr .9fr; gap: 15px; }
+    .panel { padding: 22px; border: 1px solid var(--line); border-radius: 13px; background: white; }
+    .panel-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 21px; }
+    .panel-title h2 { font: 700 15px "Space Grotesk", sans-serif; }
+    .panel-title span { color: var(--green); font-size: 11px; font-weight: 700; }
+    .chart { display: flex; align-items: end; gap: 10px; height: 140px; padding: 0 4px; border-bottom: 1px solid var(--line); background: repeating-linear-gradient(to bottom, transparent 0, transparent 34px, #edf3f7 35px); }
+    .bar-wrap { display: flex; flex: 1; flex-direction: column; align-items: center; height: 100%; justify-content: end; gap: 7px; }
+    .bar { width: min(30px, 75%); min-height: 11px; border-radius: 6px 6px 0 0; background: linear-gradient(to top, var(--blue), #28a1d2); animation: rise .8s both; transform-origin: bottom; }
+    .bar:nth-child(2n) { background: linear-gradient(to top, var(--orange-deep), var(--orange)); }
+    .bar-label { color: #8297a8; font-size: 10px; }
+    .advice { display: grid; gap: 16px; }
+    .advice-item { display: flex; gap: 12px; align-items: start; }
+    .advice-icon { display: grid; flex: 0 0 34px; place-items: center; width: 34px; height: 34px; border-radius: 9px; color: var(--green); background: var(--green-light); }
+    .advice-item strong { display: block; font-size: 12px; }
+    .advice-item p { margin-top: 4px; color: var(--ink-soft); font-size: 11px; line-height: 1.45; }
+    .controls { display: grid; grid-template-columns: 1.1fr 1.1fr repeat(4, .8fr) auto; gap: 10px; align-items: end; margin-top: 18px; padding: 18px; border: 1px solid var(--line); border-radius: 13px; background: white; box-shadow: 0 6px 20px rgba(7,28,53,.035); }
+    .control label { display: block; margin-bottom: 7px; color: var(--ink-soft); font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+    .control input { width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: #fbfdfe; outline: none; font-size: 12px; }
+    .control input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(11,110,180,.1); }
+    .action { padding: 10px 14px; border: 0; border-radius: 8px; color: white; background: var(--orange-deep); cursor: pointer; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .action:hover { background: var(--ink); }
+    .simulation { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; }
+    .simulation-result { padding: 14px 16px; border-radius: 10px; background: var(--ink); color: white; }
+    .simulation-result small { color: #a9c1d4; font-size: 10px; }
+    .simulation-result strong { display: block; margin-top: 5px; font: 700 21px "Space Grotesk", sans-serif; }
+    .view-title { display: none; }
+    .view-title.visible { display: block; }
+    .error { color: var(--orange-deep); }
+    @keyframes rise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    @media (max-width: 900px) { .shell { grid-template-columns: 76px 1fr; } .sidebar { padding: 24px 11px; } .brand { justify-content: center; padding: 0 0 35px; } .brand > div:last-child, .nav-label, .nav button span:not(.nav-icon), .side-status { display: none; } .nav button { justify-content: center; padding: 13px 8px; } .nav button.active { box-shadow: inset 0 -3px var(--orange); } }
+    @media (max-width: 1000px) { .controls { grid-template-columns: repeat(3, 1fr); } .controls .action { width: 100%; } }
+    @media (max-width: 680px) { main { padding: 22px 16px 30px; } .topbar { align-items: flex-start; margin-bottom: 26px; } .location { display: none; } .hero { grid-template-columns: 1fr; padding: 24px; } .sun-data { padding: 14px 0 0; border-top: 1px solid rgba(255,255,255,.22); border-left: 0; } .metrics, .lower, .simulation { grid-template-columns: 1fr; } .controls { grid-template-columns: repeat(2, 1fr); } .section-head { margin-top: 24px; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="/logo.svg" alt="SolarPro"></div>
+        <div><strong>SOLAR<span style="color:var(--orange)">PRO</span></strong><span>ENERGÍA INTELIGENTE</span></div>
+      </div>
+      <div class="nav-label">Panel principal</div>
+      <nav class="nav" aria-label="Navegación principal">
+        <button class="active" data-target="summary"><span class="nav-icon">⌂</span><span>Resumen</span></button>
+        <button data-target="production"><span class="nav-icon">◫</span><span>Producción</span></button>
+        <button data-target="efficiency"><span class="nav-icon">⌁</span><span>Eficiencia</span></button>
+        <button data-target="configuration"><span class="nav-icon">⚙</span><span>Configuración</span></button>
+      </nav>
+      <div class="side-status"><small>Estado de la plataforma</small><div class="status-line"><i class="dot"></i> Todos los sistemas activos</div></div>
+    </aside>
+    <main id="summary">
+      <header class="topbar">
+        <div><div class="eyebrow">Centro de control</div><h1>Bienvenido a SolarPro</h1><p class="subtitle">Cada rayo cuenta: ahorra energía hoy y construye un futuro renovable.</p></div>
+        <div class="top-actions"><div class="location" id="location">⌖ Consultando ubicación...</div><button class="refresh" id="refresh" title="Actualizar datos" aria-label="Actualizar datos">↻</button></div>
+      </header>
+      <section class="hero">
+        <div class="hero-content"><h2>Tu energía trabaja mejor bajo el sol.</h2><p>Monitorea el rendimiento de tu sistema fotovoltaico y toma decisiones con datos actualizados.</p><div class="hero-tag"><i class="dot"></i> Sistema funcionando correctamente</div></div>
+        <div class="sun-data"><small>Radiación actual</small><strong id="heroRadiation">--</strong><span>W/m² · lectura en vivo</span></div>
+      </section>
+      <section class="controls" id="configuration" aria-label="Configuración de la instalación">
+        <div class="control"><label for="latitude">LATITUD</label><input id="latitude" type="number" step="0.0001" value="11.2408"></div>
+        <div class="control"><label for="longitude">LONGITUD</label><input id="longitude" type="number" step="0.0001" value="-74.1990"></div>
+        <div class="control"><label for="panels">PANELES</label><input id="panels" type="number" min="1" value="24"></div>
+        <div class="control"><label for="panelPower">W / PANEL</label><input id="panelPower" type="number" min="1" value="290"></div>
+        <div class="control"><label for="sunHours">HORAS SOL</label><input id="sunHours" type="number" min="0" step="0.5" value="5"></div>
+        <div class="control"><label for="losses">PÉRDIDAS %</label><input id="losses" type="number" min="0" max="100" value="10"></div>
+        <button class="action" id="calculate" type="button">Calcular</button>
+      </section>
+      <section class="simulation" id="efficiency" aria-label="Resultados de la simulación">
+        <div class="simulation-result"><small>Potencia instalada</small><strong id="installedPower">-- W</strong></div>
+        <div class="simulation-result"><small>Generación estimada</small><strong id="estimatedEnergy">-- Wh</strong></div>
+        <div class="simulation-result"><small>Después de pérdidas</small><strong id="netEnergy">-- Wh</strong></div>
+      </section>
+      <div class="section-head"><h2>Indicadores de hoy</h2><span id="updated">Consultando datos...</span></div>
+      <section class="metrics">
+        <article class="metric orange"><div class="metric-top"><span>Radiación solar</span><div class="metric-icon">☀</div></div><strong id="radiation">--</strong><small>W/m² disponibles</small></article>
+        <article class="metric blue"><div class="metric-top"><span>Temperatura</span><div class="metric-icon">♨</div></div><strong id="temperature">--</strong><small>°C en el entorno</small></article>
+        <article class="metric green"><div class="metric-top"><span>Rendimiento estimado</span><div class="metric-icon">↗</div></div><strong id="performance">--</strong><small>Índice de aprovechamiento</small></article>
+      </section>
+      <section class="lower">
+        <article class="panel" id="production"><div class="panel-title"><h2>Radiación durante el día</h2><span>HOY</span></div><div class="chart" aria-label="Gráfico de radiación estimada"><div class="bar-wrap"><div class="bar" style="height:30%"></div><span class="bar-label">06h</span></div><div class="bar-wrap"><div class="bar" style="height:48%"></div><span class="bar-label">08h</span></div><div class="bar-wrap"><div class="bar" style="height:73%"></div><span class="bar-label">10h</span></div><div class="bar-wrap"><div class="bar" style="height:94%"></div><span class="bar-label">12h</span></div><div class="bar-wrap"><div class="bar" style="height:82%"></div><span class="bar-label">14h</span></div><div class="bar-wrap"><div class="bar" style="height:58%"></div><span class="bar-label">16h</span></div><div class="bar-wrap"><div class="bar" style="height:28%"></div><span class="bar-label">18h</span></div></div></article>
+        <article class="panel"><div class="panel-title"><h2>Recomendaciones</h2><span>ÓPTIMO</span></div><div class="advice"><div class="advice-item"><div class="advice-icon">✓</div><div><strong>Condiciones favorables</strong><p>La radiación actual es adecuada para generar energía.</p></div></div><div class="advice-item"><div class="advice-icon">♧</div><div><strong>Cuida tu impacto</strong><p>Tu sistema contribuye a una operación más sostenible.</p></div></div></div></article>
+      </section>
+    </main>
+  </div>
+  <script>
+    const elements = { radiation: document.querySelector('#radiation'), heroRadiation: document.querySelector('#heroRadiation'), temperature: document.querySelector('#temperature'), performance: document.querySelector('#performance'), updated: document.querySelector('#updated'), installedPower: document.querySelector('#installedPower'), estimatedEnergy: document.querySelector('#estimatedEnergy'), netEnergy: document.querySelector('#netEnergy'), location: document.querySelector('#location') };
+    const input = (id) => Number(document.querySelector(`#${id}`).value);
+    async function calculateSystem() {
+      try {
+        const query = new URLSearchParams({
+          paneles: input('panels'),
+          potencia_panel: input('panelPower'),
+          horas_sol: input('sunHours'),
+          perdidas: input('losses')
+        });
+        const response = await fetch(`/simulacion?${query}`);
+        if (!response.ok) throw new Error('Error en simulación');
+        const data = await response.json();
+        elements.installedPower.textContent = `${Math.round(data.potencia_instalada).toLocaleString('es-CO')} W`;
+        elements.estimatedEnergy.textContent = `${Math.round(data.generacion_estimada).toLocaleString('es-CO')} Wh`;
+        elements.netEnergy.textContent = `${Math.round(data.generacion_neta).toLocaleString('es-CO')} Wh`;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    async function loadLocation() {
+      const query = new URLSearchParams({ latitud: input('latitude'), longitud: input('longitude') });
+      elements.location.textContent = '⌖ Buscando ubicación...';
+      try {
+        const response = await fetch(`/ubicacion?${query}`);
+        if (!response.ok) throw new Error('No se pudo localizar');
+        const data = await response.json();
+        elements.location.textContent = `⌖ ${data.nombre}`;
+      } catch (error) {
+        elements.location.textContent = `⌖ ${input('latitude').toFixed(4)}, ${input('longitude').toFixed(4)}`;
+      }
+    }
+    async function loadData() {
+      elements.updated.textContent = 'Actualizando...';
+      try {
+        const query = new URLSearchParams({ latitud: input('latitude'), longitud: input('longitude') });
+        const response = await fetch(`/datos?${query}`);
+        if (!response.ok) throw new Error('No se pudo consultar la API');
+        const data = await response.json();
+        const radiation = Number(data.radiacion_w_m2 || 0);
+        elements.radiation.textContent = `${Math.round(radiation)}`;
+        elements.heroRadiation.textContent = `${Math.round(radiation)}`;
+        elements.temperature.textContent = `${Number(data.temperatura_c || 0).toFixed(1)}`;
+        elements.performance.textContent = `${Math.min(100, Math.round(radiation / 8.5))}%`;
+        elements.updated.textContent = `Actualizado ${new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}`;
+      } catch (error) {
+        elements.updated.innerHTML = '<span class="error">API no disponible</span>';
+      }
+    }
+    document.querySelector('#refresh').addEventListener('click', () => { loadData(); loadLocation(); });
+    document.querySelector('#calculate').addEventListener('click', () => { calculateSystem(); loadData(); loadLocation(); });
+    document.querySelectorAll('.nav button').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.nav button').forEach((item) => item.classList.remove('active'));
+        button.classList.add('active');
+        document.querySelector(`#${button.dataset.target}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+    calculateSystem();
+    loadData();
+    loadLocation();
+  </script>
+</body>
+</html>
