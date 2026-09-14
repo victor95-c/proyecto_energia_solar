@@ -3,6 +3,9 @@ import requests
 from fastapi import APIRouter
 
 from API.solar_api import SolarAPIService
+from Patrones.prototype import SistemaSolar
+from Patrones.composite import PanelSolar, ArregloSolar
+from Patrones.decorator import GeneracionBase, PerdidasDecorator
 
 
 router = APIRouter()
@@ -77,4 +80,42 @@ def ubicacion_coordenadas(
             "latitud": latitud,
             "longitud": longitud,
         }
+
+# Modelo base Prototype
+sistema_base = SistemaSolar(
+    "Sistema Base",
+    0,  # Se actualizará al clonar
+    0,  # Se actualizará al clonar
+    "Monocristalino",
+    "Ubicación por defecto"
+)
+
+@router.get("/simulacion")
+def simulacion_sistema(
+    paneles: int = 24,
+    potencia_panel: float = 290.0,
+    horas_sol: float = 5.0,
+    perdidas: float = 10.0
+):
+    # 1. Prototype: Clonar el sistema base
+    sistema = sistema_base.clonar()
+    sistema.cantidad_paneles = paneles
+    sistema.potencia_panel = potencia_panel
+
+    # 2. Composite: Construir el arreglo
+    arreglo = ArregloSolar("Arreglo Principal")
+    for i in range(paneles):
+        arreglo.agregar(PanelSolar(i + 1, potencia_panel, "Monocristalino"))
+    
+    potencia_instalada = arreglo.calcular_potencia()
+
+    # 3. Decorator: Calcular generación
+    generacion = GeneracionBase(potencia_instalada, horas_sol)
+    generacion_con_perdidas = PerdidasDecorator(generacion, perdidas)
+
+    return {
+        "potencia_instalada": potencia_instalada,
+        "generacion_estimada": generacion.calcular(),
+        "generacion_neta": generacion_con_perdidas.calcular()
+    }
 
