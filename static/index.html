@@ -167,13 +167,23 @@
   <script>
     const elements = { radiation: document.querySelector('#radiation'), heroRadiation: document.querySelector('#heroRadiation'), temperature: document.querySelector('#temperature'), performance: document.querySelector('#performance'), updated: document.querySelector('#updated'), installedPower: document.querySelector('#installedPower'), estimatedEnergy: document.querySelector('#estimatedEnergy'), netEnergy: document.querySelector('#netEnergy'), location: document.querySelector('#location') };
     const input = (id) => Number(document.querySelector(`#${id}`).value);
-    function calculateSystem() {
-      const installedPower = input('panels') * input('panelPower');
-      const estimatedEnergy = installedPower * input('sunHours');
-      const netEnergy = estimatedEnergy * (1 - input('losses') / 100);
-      elements.installedPower.textContent = `${installedPower.toLocaleString('es-CO')} W`;
-      elements.estimatedEnergy.textContent = `${Math.round(estimatedEnergy).toLocaleString('es-CO')} Wh`;
-      elements.netEnergy.textContent = `${Math.round(netEnergy).toLocaleString('es-CO')} Wh`;
+    async function calculateSystem() {
+      try {
+        const query = new URLSearchParams({
+          paneles: input('panels'),
+          potencia_panel: input('panelPower'),
+          horas_sol: input('sunHours'),
+          perdidas: input('losses')
+        });
+        const response = await fetch(`/simulacion?${query}`);
+        if (!response.ok) throw new Error('Error en simulación');
+        const data = await response.json();
+        elements.installedPower.textContent = `${Math.round(data.potencia_instalada).toLocaleString('es-CO')} W`;
+        elements.estimatedEnergy.textContent = `${Math.round(data.generacion_estimada).toLocaleString('es-CO')} Wh`;
+        elements.netEnergy.textContent = `${Math.round(data.generacion_neta).toLocaleString('es-CO')} Wh`;
+      } catch (error) {
+        console.error(error);
+      }
     }
     async function loadLocation() {
       const query = new URLSearchParams({ latitud: input('latitude'), longitud: input('longitude') });
